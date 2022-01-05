@@ -12,7 +12,7 @@ want to use environment variables in. Follow instructions
 [here](https://github.com/just-jeb/angular-builders/tree/master/packages/custom-webpack#usage)
 on how to.
 
-Then add a `custom-webpack.config.ts` file, in it we will define a webpack
+Then add a `custom-webpack.config.ts` file, in it, we will define a webpack
 plugin, declaring the variables we want to pass to our application and the
 source will be environment variables, but we can pass the data from any other
 source including reading the package.json file as demoed [here](https://github.com/just-jeb/angular-builders/tree/master/packages/custom-webpack#custom-webpack-config-function).:
@@ -49,9 +49,9 @@ config.plugins?.push(
 );
 ```
 
-We are defining an `APP_VERSION` variable and in it we are passing the value
-from environment variable and defaulting to `1.0.0` if environment variable is not set. Feel
-free to replace the variable, with the variables of your choice i.e.
+We are defining an `APP_VERSION` variable, and in it, we are passing the value
+from the environment variable and defaulting to `1.0.0` if the environment variable is not set. Feel
+free to replace the variable with the variables of your choice i.e.
 
 ```ts
 config.plugins?.push(
@@ -62,7 +62,7 @@ config.plugins?.push(
 );
 ```
 
-And finally we can consume it inside our Angular app:
+And finally, we can consume it inside our Angular app:
 
 ```ts
 import { Component } from "@angular/core";
@@ -89,4 +89,4 @@ logged out:
 APP_VERSION=10.0.1 ng s
 ```
 
-Where `APP_VERSION` is the environment variable.
+where `APP_VERSION` is the environment variable.
