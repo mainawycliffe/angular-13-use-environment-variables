@@ -50,7 +50,7 @@ config.plugins?.push(
 ```
 
 We are defining an `APP_VERSION` variable and in it we are passing the value
-from environment variable and defaulting to `1.0.0` is none is available. Feel
+from environment variable and defaulting to `1.0.0` if environment variable is not set. Feel
 free to replace the variable, with the variables of your choice i.e.
 
 ```ts
