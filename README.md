@@ -1,27 +1,92 @@
-# Angular13UseEnvironmentVariables
+# Angular 13 Consume Environment Variables Demo
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 13.1.2.
+First, install `@angular-builders/custom-webpack`:
 
-## Development server
+```sh
+yarn add --dev @angular-builders/custom-webpack
+```
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+Next, replace `@angular-devkit/build-angular` with
+`@angular-builders/custom-webpack` in your `angular.json` for the project(s) you
+want to use environment variables in. Follow instructions
+[here](https://github.com/just-jeb/angular-builders/tree/master/packages/custom-webpack#usage)
+on how to.
 
-## Code scaffolding
+Then add a `custom-webpack.config.ts` file, in it we will define a webpack
+plugin, declaring the variables we want to pass to our application and the
+source will be environment variables, but we can pass the data from any other
+source including reading the package.json file as demoed [here](https://github.com/just-jeb/angular-builders/tree/master/packages/custom-webpack#custom-webpack-config-function).:
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+```ts
+import {
+  CustomWebpackBrowserSchema,
+  TargetOptions,
+} from "@angular-builders/custom-webpack";
+import * as webpack from "webpack";
 
-## Build
+export default (
+  config: webpack.Configuration,
+  options: CustomWebpackBrowserSchema,
+  targetOptions: TargetOptions
+) => {
+  config.plugins?.push(
+    new webpack.DefinePlugin({
+      APP_VERSION: JSON.stringify(process.env["APP_VERSION"] || "1.0.0"),
+    })
+  );
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+  return config;
+};
+```
 
-## Running unit tests
+Pay attention to the following section:
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+```ts
+config.plugins?.push(
+  new webpack.DefinePlugin({
+    APP_VERSION: JSON.stringify(process.env["APP_VERSION"] || "1.0.0"),
+  })
+);
+```
 
-## Running end-to-end tests
+We are defining an `APP_VERSION` variable and in it we are passing the value
+from environment variable and defaulting to `1.0.0` is none is available. Feel
+free to replace the variable, with the variables of your choice i.e.
 
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
+```ts
+config.plugins?.push(
+  new webpack.DefinePlugin({
+    APP_VERSION: JSON.stringify(process.env["APP_VERSION"] || "1.0.0"),
+    OTHER_VARIABLE: JSON.stringify(process.env["OTHER_VARIABLE"] || "1.0.0"),
+  })
+);
+```
 
-## Further help
+And finally we can consume it inside our Angular app:
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+```ts
+import { Component } from "@angular/core";
+
+// make sure to declare a global variable here to prevent typescript from throwing an error
+declare var APP_VERSION: string;
+
+@Component({
+  selector: "app-root",
+  templateUrl: "./app.component.html",
+  styleUrls: ["./app.component.css"],
+})
+export class AppComponent {
+  constructor() {
+    console.log(`APP_VERSION: ${APP_VERSION}`);
+  }
+}
+```
+
+You can test this demo by running and check the browser console on the value being
+logged out:
+
+```sh
+APP_VERSION=10.0.1 ng s
+```
+
+Where `APP_VERSION` is the environment variable.
